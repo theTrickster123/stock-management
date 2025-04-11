@@ -58,6 +58,8 @@ public class AppUser {
     @Column(name="created_at",nullable = false)
     private LocalDateTime createdAt;
 
+    //add image field nullable true for user
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
