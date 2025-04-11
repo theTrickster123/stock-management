@@ -28,6 +28,17 @@ public class SubscriptionPayment {
     @JoinColumn(name = "subscription_id", referencedColumnName = "id", nullable = false)
     private Subscription subscription;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     public SubscriptionPayment(UUID id, BigDecimal amountPayed, LocalDateTime createdAt, LocalDateTime updatedAt, Subscription subscription) {
         this.id = id;
         this.amountPayed = amountPayed;

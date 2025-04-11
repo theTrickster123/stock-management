@@ -62,7 +62,7 @@ public class Product {
 
 
     //To configure correctly
-    /*@PrePersist
+    @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
@@ -71,7 +71,7 @@ public class Product {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }*/
+    }
 
     public Product(Long id, String title, String description, BigDecimal price, Integer quantity, Category category, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isActive, String manufacturer, Boolean isOutOfStock, String details, BigDecimal totalIncome, BigDecimal totalCharges, byte[] image) {
         this.id = id;

@@ -58,6 +58,17 @@ public class AppUser {
     @Column(name="created_at",nullable = false)
     private LocalDateTime createdAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     public AppUser(UUID id, String firstName, String lastName, LocalDate birthDate, String email, String password, Role role, String country, boolean isActive, boolean isBanned, LocalDateTime updatedAt, String address, int age, String phone, LocalDateTime createdAt) {
         this.id = id;
         this.firstName = firstName;

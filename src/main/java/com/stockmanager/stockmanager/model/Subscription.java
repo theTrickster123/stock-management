@@ -47,6 +47,17 @@ public class Subscription {
     @Column(name="expired_at",nullable = false)
     private LocalDate expiredAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     public Subscription(UUID id, LocalDateTime createdAt, LocalDateTime updatedAt, BigDecimal price, BigDecimal totalPaid, Plan plan, boolean isActive, AppUser appUser, String description, LocalDate expiredAt) {
         this.id = id;
         this.createdAt = createdAt;
