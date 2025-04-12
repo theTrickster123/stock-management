@@ -48,9 +48,6 @@ public class ProductMapper {
         product.setImage(dto.getImage());
 
         return product;
-
         }
-
-
     }
 

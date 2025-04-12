@@ -19,5 +19,4 @@ public class SubscriptionPaymentService {
     public SubscriptionPayment createSubscriptionPayment(SubscriptionPayment subscriptionPayment) {
         return subscriptionPaymentRepository.save(subscriptionPayment);
     }
-
 }

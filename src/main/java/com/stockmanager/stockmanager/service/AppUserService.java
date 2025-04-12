@@ -34,5 +34,4 @@ public class AppUserService {
             throw new RuntimeException("User not found with id: " + id);
         }
     }
-
 }

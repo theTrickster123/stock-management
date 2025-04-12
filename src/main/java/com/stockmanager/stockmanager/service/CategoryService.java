@@ -33,5 +33,4 @@ public class CategoryService {
             throw new RuntimeException("User not found with id: " + id);
         }
     }
-
 }

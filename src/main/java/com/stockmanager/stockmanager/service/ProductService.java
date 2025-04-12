@@ -29,7 +29,7 @@ public class ProductService {
     }
 
 
-
+    @Transactional
     public ProductDTO createProduct(CreateProductDTO dto) {
         if (dto == null) throw new IllegalArgumentException("Les données sont manquantes");
 
@@ -81,6 +81,4 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Product not found with id " + id));
         productRepository.delete(product);
     }
-
-
 }
