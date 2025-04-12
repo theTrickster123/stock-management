@@ -65,10 +65,5 @@ public class ProductService {
         }
     }
 
-    /*public ProductDTO createProductFromDTO(ProductDTO dto) {
-        Product product = ProductMapper.toEntity(dto);
-        Product saved = productRepository.save(product);
-        return ProductMapper.toDto(saved);
-    }*/
 
 }
