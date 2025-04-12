@@ -39,7 +39,7 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private Boolean isActive;
+    private Boolean isActive=true;
 
     @Column(length = 50, nullable = false)
     private String manufacturer;
@@ -58,7 +58,7 @@ public class Product {
 
     @Lob
     @Column(nullable = true)
-    private byte[] image;
+    private String image;
 
 
     //To configure correctly
@@ -73,7 +73,7 @@ public class Product {
         updatedAt = LocalDateTime.now();
     }
 
-    public Product(Long id, String title, String description, BigDecimal price, Integer quantity, Category category, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isActive, String manufacturer, Boolean isOutOfStock, String details, BigDecimal totalIncome, BigDecimal totalCharges, byte[] image) {
+    public Product(Long id, String title, String description, BigDecimal price, Integer quantity, Category category, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isActive, String manufacturer, Boolean isOutOfStock, String details, BigDecimal totalIncome, BigDecimal totalCharges, String image) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -203,11 +203,11 @@ public class Product {
         this.totalCharges = totalCharges;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -228,7 +228,7 @@ public class Product {
                 ", details='" + details + '\'' +
                 ", totalIncome=" + totalIncome +
                 ", totalCharges=" + totalCharges +
-                ", image=" + Arrays.toString(image) +
+                ", image=" + image +
                 '}';
     }
 
@@ -241,6 +241,6 @@ public class Product {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, price, quantity, category, createdAt, updatedAt, isActive, manufacturer, isOutOfStock, details, totalIncome, totalCharges, Arrays.hashCode(image));
+        return Objects.hash(id, title, description, price, quantity, category, createdAt, updatedAt, isActive, manufacturer, isOutOfStock, details, totalIncome, totalCharges, image);
     }
 }

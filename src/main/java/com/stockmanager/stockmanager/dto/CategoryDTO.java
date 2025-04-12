@@ -1,33 +1,28 @@
-package com.stockmanager.stockmanager.model;
+package com.stockmanager.stockmanager.dto;
 
-import jakarta.persistence.*;
 
-@Entity
-@Table(name="category")
-public class Category {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class CategoryDTO {
+
+
     private Long id;
 
-    @Column(length = 50, nullable = false)
+
     private String title;
 
-    @Column(columnDefinition = "TEXT", nullable = true)
+
     private String description;
 
-    public Category(Long id, String title, String description) {
+    public CategoryDTO(Long id, String title, String description) {
         this.id = id;
         this.title = title;
         this.description = description;
     }
 
-    public Category() {
-    }
-
     public Long getId() {
         return id;
     }
+
 
     public String getTitle() {
         return title;
