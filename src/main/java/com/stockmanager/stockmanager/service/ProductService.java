@@ -75,7 +75,12 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-
+    @Transactional
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id " + id));
+        productRepository.delete(product);
+    }
 
 
 }
