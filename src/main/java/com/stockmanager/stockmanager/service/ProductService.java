@@ -10,8 +10,11 @@ import com.stockmanager.stockmanager.repository.CategoryRepository;
 import com.stockmanager.stockmanager.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -64,6 +67,15 @@ public class ProductService {
             throw new RuntimeException("Product not found with id: " + id);
         }
     }
+
+    public List<ProductDTO> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(ProductMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+
 
 
 }

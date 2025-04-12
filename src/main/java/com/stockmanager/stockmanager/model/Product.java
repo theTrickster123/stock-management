@@ -7,13 +7,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Random;
 
 @Entity
 @Table(name="product")
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(length = 50, nullable = false)
@@ -64,6 +64,8 @@ public class Product {
     //To configure correctly
     @PrePersist
     protected void onCreate() {
+        //Avant la persistance on met l'id qui a été générer dans generateUniqueId
+        this.id = generateUniqueId();
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
@@ -71,6 +73,18 @@ public class Product {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    //genere id unique entre 0 et 999 pour le produit
+    private Long generateUniqueId() {
+        Random random = new Random();
+        long timestamp = System.currentTimeMillis();  // Timestamp actuel
+        long randomPart = random.nextLong();           // Valeur aléatoire
+        long uniqueId = timestamp ^ randomPart;       // XOR pour combiner les deux
+        long id = Math.abs(uniqueId);                 // Assurer que l'ID est positif
+
+        // Limiter l'ID à 3 chiffres
+        return id % 1000;                             // Retourne un ID entre 0 et 999
     }
 
     public Product(Long id, String title, String description, BigDecimal price, Integer quantity, Category category, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isActive, String manufacturer, Boolean isOutOfStock, String details, BigDecimal totalIncome, BigDecimal totalCharges, String image) {

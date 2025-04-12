@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -42,4 +43,12 @@ public class ProductController {
         ProductDTO product = productService.findById(id);
         return ResponseEntity.ok(product);
     }
+
+    @GetMapping("")
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+        List<ProductDTO> productDTOs = productService.getAllProducts();
+        return ResponseEntity.ok(productDTOs);
+    }
+
+    
 }
