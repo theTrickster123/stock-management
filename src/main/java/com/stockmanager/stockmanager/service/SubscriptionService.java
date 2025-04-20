@@ -15,7 +15,5 @@ public class SubscriptionService {
         this.subscriptionRepository = subscriptionRepository;
     }
 
-    public Subscription createSubscription(Subscription subscription) {
-        return subscriptionRepository.save(subscription);
-    }
+
 }
