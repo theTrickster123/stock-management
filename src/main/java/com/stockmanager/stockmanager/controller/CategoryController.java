@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/category")
 public class CategoryController {
@@ -32,5 +34,22 @@ public class CategoryController {
         } catch (RuntimeException ex) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND); // Not Found if user doesn't exist
         }
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
+        return  new ResponseEntity<>(categoryService.findAll(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Category> deleteCategory(@PathVariable Long id) {
+       categoryService.deleteCategory(id);
+       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO) {
+        categoryService.updateCategory(categoryDTO, id);
+        return new ResponseEntity<>(categoryDTO, HttpStatus.OK);
     }
 }
