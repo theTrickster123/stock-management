@@ -81,4 +81,31 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Product not found with id " + id));
         productRepository.delete(product);
     }
+
+    @Transactional
+    public ProductDTO updateProduct(ProductDTO dto, Long id) {
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent()) {
+            Category category = categoryRepository.findById(dto.getCategory().getId())
+                    .orElseThrow(() -> new RuntimeException("Category not found with id: " + dto.getCategory().getId()));
+            Product product = productOpt.get();
+            product.setTitle(dto.getTitle());
+            product.setDescription(dto.getDescription());
+            product.setPrice(dto.getPrice());
+            product.setQuantity(dto.getQuantity());
+            product.setCategory(category);
+            product.setActive(dto.getActive());
+            product.setManufacturer(dto.getManufacturer());
+            product.setOutOfStock(dto.getOutOfStock());
+            product.setDetails(dto.getDetails());
+            product.setTotalIncome(dto.getTotalIncome());
+            product.setTotalCharges(dto.getTotalCharges());
+            product.setImage(dto.getImage());
+            Product saved = productRepository.save(product);
+            return ProductMapper.toDto(saved);
+        }
+        throw new RuntimeException("Product not found with id " + id);
+
+
+    }
 }
