@@ -2,7 +2,6 @@ package com.stockmanager.stockmanager.service;
 
 import com.stockmanager.stockmanager.dto.CategoryDTO;
 import com.stockmanager.stockmanager.mapper.CategoryMapper;
-import com.stockmanager.stockmanager.mapper.ProductMapper;
 import com.stockmanager.stockmanager.model.Category;
 import com.stockmanager.stockmanager.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
