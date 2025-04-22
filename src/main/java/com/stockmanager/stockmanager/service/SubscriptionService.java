@@ -8,8 +8,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -40,5 +41,29 @@ public class SubscriptionService {
 
     }
 
+    //Supprimer une souscription
+    public void deleteSubscription(UUID id) {
+        Subscription subscription = subscriptionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id " + id));
+        subscriptionRepository.delete(subscription);
+    }
+    //Update susbscription
+    public SubscriptionDTO updateSubscription(SubscriptionDTO subscriptionDTO, UUID id) {
+        Optional<Subscription> subscription = subscriptionRepository.findById(id);
+        if (subscription.isEmpty()) {
+            throw new RuntimeException("Subscription not found");  // Gérer l'exception
+        }
 
-}
+        // Mapper DTO -> Entity et mettre à jour
+        Subscription existingSubscription = subscription.get();
+        existingSubscription = subscriptionMapper.toEntity(subscriptionDTO);  // Mettre à jour les valeurs avec la methode toEntity de l'interface SubscriptionMapper
+        existingSubscription.setId(id);  // Garder le même ID
+        existingSubscription = subscriptionRepository.save(existingSubscription);  // Sauvegarder dans la DB
+
+        return subscriptionMapper.toDTO(existingSubscription);  // Retourner le DTO de la souscription mise à jour
+
+        }
+    }
+
+
+

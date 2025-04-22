@@ -80,6 +80,10 @@ public class Subscription {
         return id;
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
