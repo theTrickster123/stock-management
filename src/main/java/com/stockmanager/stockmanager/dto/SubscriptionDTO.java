@@ -11,6 +11,7 @@ public class SubscriptionDTO {
 
 
     private UUID id;
+    private String Description;
     private BigDecimal price;
     private BigDecimal totalPaid = BigDecimal.ZERO; // Default value
     private Plan plan;
@@ -22,7 +23,7 @@ public class SubscriptionDTO {
     public SubscriptionDTO() {}
 
     // ✅ Constructeur complet (optionnel, utile si tu veux créer rapidement une instance sans setters)
-    public SubscriptionDTO(UUID id, BigDecimal price, BigDecimal totalPaid, Plan plan, boolean isActive, LocalDate expiredAt,UUID userId) {
+    public SubscriptionDTO(UUID id, String Description, BigDecimal price, BigDecimal totalPaid, Plan plan, boolean isActive, LocalDate expiredAt,UUID userId) {
         this.id = id;
         this.price = price;
         this.totalPaid = totalPaid;
@@ -30,6 +31,7 @@ public class SubscriptionDTO {
         this.isActive = isActive;
         this.expiredAt = expiredAt;
         this.userId = userId;
+        this.Description = Description;
     }
 
     // ✅ Getters & Setters
@@ -39,6 +41,12 @@ public class SubscriptionDTO {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+    public String getDescription() {
+        return Description;
+    }
+    public void setDescription(String Description) {
+        this.Description = Description;
     }
 
     public BigDecimal getPrice() {
