@@ -53,6 +53,9 @@ public class SubscriptionPayment {
         return id;
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public BigDecimal getAmountPayed() {
         return amountPayed;

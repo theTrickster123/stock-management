@@ -1,0 +1,45 @@
+package com.stockmanager.stockmanager.controller;
+
+import com.stockmanager.stockmanager.dto.SubscriptionPaymentDTO;
+import com.stockmanager.stockmanager.service.SubscriptionPaymentService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/payments")
+public class SubscriptionPaymentController {
+
+    private final SubscriptionPaymentService subscriptionPaymentService;
+
+    public SubscriptionPaymentController(SubscriptionPaymentService subscriptionPaymentService) {
+        this.subscriptionPaymentService = subscriptionPaymentService;
+    }
+
+    @PostMapping
+    public ResponseEntity<SubscriptionPaymentDTO> createPayment(@RequestBody SubscriptionPaymentDTO dto) {
+        SubscriptionPaymentDTO created = subscriptionPaymentService.createPayment(dto);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/subscription/{subscriptionId}")
+    public ResponseEntity<List<SubscriptionPaymentDTO>> getPaymentsBySubscriptionId(@PathVariable UUID subscriptionId) {
+        List<SubscriptionPaymentDTO> payments = subscriptionPaymentService.getPaymentsBySubscriptionId(subscriptionId);
+        return ResponseEntity.ok(payments);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SubscriptionPaymentDTO> getPaymentById(@PathVariable UUID id) {
+        SubscriptionPaymentDTO payment = subscriptionPaymentService.getPaymentById(id);
+        return ResponseEntity.ok(payment);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePayment(@PathVariable UUID id) {
+        subscriptionPaymentService.deletePayment(id);
+        return ResponseEntity.noContent().build();
+    }
+}
