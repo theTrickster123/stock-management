@@ -54,10 +54,20 @@ public class SubscriptionService {
             throw new RuntimeException("Subscription not found");  // Gérer l'exception
         }
 
+
+
+
         // Mapper DTO -> Entity et mettre à jour
         Subscription existingSubscription = subscription.get();
         existingSubscription = subscriptionMapper.toEntity(subscriptionDTO);  // Mettre à jour les valeurs avec la methode toEntity de l'interface SubscriptionMapper
         existingSubscription.setId(id);  // Garder le même ID
+
+        //ne pas avoir null sur expired_at
+        existingSubscription.setExpiredAt(
+                existingSubscription.getExpiredAt() != null
+                        ? existingSubscription.getExpiredAt()
+                        : subscription.get().getExpiredAt()
+        );
         existingSubscription = subscriptionRepository.save(existingSubscription);  // Sauvegarder dans la DB
 
         return subscriptionMapper.toDTO(existingSubscription);  // Retourner le DTO de la souscription mise à jour

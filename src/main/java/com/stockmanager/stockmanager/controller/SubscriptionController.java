@@ -35,4 +35,10 @@ public class SubscriptionController {
         subscriptionService.deleteSubscription(subscriptionId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping("/{id}")  //Have to fix expired_at error concerning the null content 
+    public ResponseEntity<SubscriptionDTO> updateSubscription(@PathVariable UUID id, @RequestBody SubscriptionDTO subscriptionDTO) {
+        subscriptionService.updateSubscription(subscriptionDTO, id);
+        return new ResponseEntity<>(subscriptionDTO, HttpStatus.OK);
+    }
 }

@@ -18,7 +18,7 @@ public class Subscription {
     @GeneratedValue
     private UUID id;
 
-    @Column(name="created_at",nullable = false)
+    @Column(name="created_at",nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name="updated_at",nullable = false)
@@ -75,6 +75,8 @@ public class Subscription {
     public Subscription() {
 
     }
+
+
 
     public UUID getId() {
         return id;
