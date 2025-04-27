@@ -12,7 +12,7 @@ public interface SubscriptionPaymentRepository extends JpaRepository<Subscriptio
 
     //Find subscriptionPayments by Subscrption Id
     List<SubscriptionPayment> findBySubscriptionId(UUID subscriptionId);
-
+    void deleteBySubscriptionId(UUID subscriptionId);
     Optional<SubscriptionPayment> findFirstBySubscriptionOrderByCreatedAtDesc(Subscription subscription);
 
 }

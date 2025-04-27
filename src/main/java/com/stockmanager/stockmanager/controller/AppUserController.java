@@ -37,5 +37,19 @@ public class AppUserController {
         }
     }
 
+    // Mettre à jour un utilisateur
+    @PutMapping("/{id}")
+    public ResponseEntity<AppUserDTO> updateAppUser(@PathVariable UUID id, @RequestBody AppUser appUser) {
+        AppUserDTO updatedAppUser = appUserService.updateAppUser(id, appUser);
+        return ResponseEntity.ok(updatedAppUser);
+    }
+
+    // Supprimer un utilisateur
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAppUser(@PathVariable UUID id) {
+        appUserService.deleteAppUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
 

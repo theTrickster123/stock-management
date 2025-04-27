@@ -10,5 +10,6 @@ import java.util.UUID;
 public interface SubscriptionRepository extends JpaRepository<Subscription, UUID> {
 
     List<Subscription> findByAppUserId(UUID userId);
+    void deleteByAppUserId(UUID userId);
 
 }
