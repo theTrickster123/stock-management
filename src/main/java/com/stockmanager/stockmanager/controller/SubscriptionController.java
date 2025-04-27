@@ -41,4 +41,11 @@ public class SubscriptionController {
         subscriptionService.updateSubscription(subscriptionDTO, id);
         return new ResponseEntity<>(subscriptionDTO, HttpStatus.OK);
     }
+
+    @PostMapping("/updateStatus")
+    public ResponseEntity<String> updateSubscriptionStatus() {
+        // Appeler la méthode de mise à jour des statuts
+        subscriptionService.updateSubscriptionStatus();
+        return ResponseEntity.ok("Subscription status updated successfully.");
+    }
 }

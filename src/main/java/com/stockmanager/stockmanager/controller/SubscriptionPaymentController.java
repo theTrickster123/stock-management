@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,10 +20,17 @@ public class SubscriptionPaymentController {
         this.subscriptionPaymentService = subscriptionPaymentService;
     }
 
-    @PostMapping
+    /*@PostMapping
     public ResponseEntity<SubscriptionPaymentDTO> createPayment(@RequestBody SubscriptionPaymentDTO dto) {
         SubscriptionPaymentDTO created = subscriptionPaymentService.createPayment(dto);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }*/
+
+    @PostMapping("/{subscriptionId}")
+    public ResponseEntity<SubscriptionPaymentDTO> createPayment(@PathVariable UUID subscriptionId,
+                                                                @RequestParam BigDecimal amountPayed) {
+        SubscriptionPaymentDTO subscriptionPaymentDTO = subscriptionPaymentService.createSubscriptionPayment(subscriptionId, amountPayed);
+        return ResponseEntity.ok(subscriptionPaymentDTO);
     }
 
     @GetMapping("/subscription/{subscriptionId}")

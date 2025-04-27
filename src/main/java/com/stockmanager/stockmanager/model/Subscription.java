@@ -51,7 +51,6 @@ public class Subscription {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        expiredAt=LocalDate.now(); //just for testing gonna remove it
     }
 
     @PreUpdate
