@@ -3,7 +3,9 @@ package com.stockmanager.stockmanager.service;
 
 import com.stockmanager.stockmanager.dto.CreateProductDTO;
 import com.stockmanager.stockmanager.dto.ProductDTO;
+import com.stockmanager.stockmanager.dto.ProductSaleResponseDTO;
 import com.stockmanager.stockmanager.mapper.ProductMapper;
+import com.stockmanager.stockmanager.mapper.ProductSaleMapper;
 import com.stockmanager.stockmanager.model.Category;
 import com.stockmanager.stockmanager.model.Product;
 import com.stockmanager.stockmanager.repository.CategoryRepository;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,11 +25,13 @@ public class ProductService {
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final ProductSaleMapper productSaleMapper;
 
     @Autowired
-    public ProductService(ProductRepository productRepository,CategoryRepository categoryRepository) {
+    public ProductService(ProductRepository productRepository,CategoryRepository categoryRepository,ProductSaleMapper productSaleMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.productSaleMapper = productSaleMapper;
     }
 
 
@@ -105,7 +111,38 @@ public class ProductService {
             return ProductMapper.toDto(saved);
         }
         throw new RuntimeException("Product not found with id " + id);
+    }
 
+    @Transactional
+    public ProductSaleResponseDTO sellProduct(Long productId, int quantitySold) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
 
+        if (product.getQuantity() < quantitySold) {
+            throw new RuntimeException("Stock insuffisant pour vendre " + quantitySold + " unités");
+        }
+
+        // Mise à jour du produit
+        product.setQuantity(product.getQuantity() - quantitySold);
+        product.setTotalSoldQuantity(product.getTotalSoldQuantity() + quantitySold);
+
+        BigDecimal saleIncome = product.getPrice().multiply(BigDecimal.valueOf(quantitySold));
+        BigDecimal saleCharges = product.getPurchasePrice().multiply(BigDecimal.valueOf(quantitySold));
+
+        product.setTotalIncome(product.getTotalIncome().add(saleIncome));
+        product.setTotalCharges(product.getTotalCharges().add(saleCharges));
+        product.setOutOfStock(product.getQuantity() <= 0);
+        product.setUpdatedAt(LocalDateTime.now());
+
+        productRepository.save(product);
+
+        // Utiliser MapStruct
+        ProductSaleResponseDTO responseDTO = productSaleMapper.toProductSaleResponseDTO(product);
+
+        // Compléter les champs ignorés
+        responseDTO.setQuantitySold(quantitySold);
+        responseDTO.setSaleIncome(saleIncome);
+
+        return responseDTO;
     }
 }

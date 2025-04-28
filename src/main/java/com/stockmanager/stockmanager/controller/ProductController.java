@@ -1,10 +1,8 @@
 package com.stockmanager.stockmanager.controller;
 
-import com.stockmanager.stockmanager.dto.AppUserDTO;
 import com.stockmanager.stockmanager.dto.CreateProductDTO;
 import com.stockmanager.stockmanager.dto.ProductDTO;
-import com.stockmanager.stockmanager.model.AppUser;
-import com.stockmanager.stockmanager.model.Product;
+import com.stockmanager.stockmanager.dto.ProductSaleResponseDTO;
 import com.stockmanager.stockmanager.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/products")
@@ -60,6 +57,16 @@ public class ProductController {
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
         productService.updateProduct(productDTO, id);
         return ResponseEntity.ok(productDTO);
+    }
+    // Endpoint pour vendre un produit a test plus tard
+    @PostMapping("/{productId}/sell")
+    public ResponseEntity<ProductSaleResponseDTO> sellProduct(
+            @PathVariable Long productId,
+            @RequestParam int quantitySold) {
+
+        ProductSaleResponseDTO responseDTO = productService.sellProduct(productId, quantitySold);
+
+        return ResponseEntity.ok(responseDTO);
     }
 
 
