@@ -28,9 +28,15 @@ public class Product {
     @Column(nullable = false)
     private Integer quantity;
 
+    @Column(precision = 10, scale = 2, nullable = false)
+    private BigDecimal purchasePrice; // Prix d'achat du produit (ce que toi tu as payé)
+
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
     private Category category;
+
+    @Column(nullable = false)
+    private Integer totalSoldQuantity = 0; // Quantité totale vendue
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -87,7 +93,7 @@ public class Product {
         return id % 1000;                             // Retourne un ID entre 0 et 999
     }
 
-    public Product(Long id, String title, String description, BigDecimal price, Integer quantity, Category category, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isActive, String manufacturer, Boolean isOutOfStock, String details, BigDecimal totalIncome, BigDecimal totalCharges, String image) {
+    public Product(Long id, String title, String description, BigDecimal price, Integer quantity, Category category, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isActive, String manufacturer, Boolean isOutOfStock, String details, BigDecimal totalIncome, BigDecimal totalCharges, String image,BigDecimal purchasePrice,Integer totalSoldQuantity) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -102,6 +108,8 @@ public class Product {
         this.details = details;
         this.totalIncome = totalIncome;
         this.totalCharges = totalCharges;
+        this.purchasePrice = purchasePrice;
+        this.totalSoldQuantity = totalSoldQuantity;
         this.image = image;
     }
 
@@ -147,6 +155,22 @@ public class Product {
 
     public Category getCategory() {
         return category;
+    }
+
+    public BigDecimal getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public void setPurchasePrice(BigDecimal purchasePrice) {
+        this.purchasePrice = purchasePrice;
+    }
+
+    public Integer getTotalSoldQuantity() {
+        return totalSoldQuantity;
+    }
+
+    public void setTotalSoldQuantity(Integer totalSoldQuantity) {
+        this.totalSoldQuantity = totalSoldQuantity;
     }
 
     public void setCategory(Category category) {
@@ -242,6 +266,8 @@ public class Product {
                 ", details='" + details + '\'' +
                 ", totalIncome=" + totalIncome +
                 ", totalCharges=" + totalCharges +
+                ", purchasePrice=" + purchasePrice +
+                ", totalSoldQuantity=" + totalSoldQuantity +
                 ", image=" + image +
                 '}';
     }
@@ -250,11 +276,11 @@ public class Product {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(id, product.id) && Objects.equals(title, product.title) && Objects.equals(description, product.description) && Objects.equals(price, product.price) && Objects.equals(quantity, product.quantity) && Objects.equals(category, product.category) && Objects.equals(createdAt, product.createdAt) && Objects.equals(updatedAt, product.updatedAt) && Objects.equals(isActive, product.isActive) && Objects.equals(manufacturer, product.manufacturer) && Objects.equals(isOutOfStock, product.isOutOfStock) && Objects.equals(details, product.details) && Objects.equals(totalIncome, product.totalIncome) && Objects.equals(totalCharges, product.totalCharges) && Objects.deepEquals(image, product.image);
+        return Objects.equals(id, product.id) && Objects.equals(title, product.title) && Objects.equals(description, product.description) && Objects.equals(price, product.price) && Objects.equals(quantity, product.quantity) && Objects.equals(purchasePrice, product.purchasePrice) && Objects.equals(category, product.category) && Objects.equals(totalSoldQuantity, product.totalSoldQuantity) && Objects.equals(createdAt, product.createdAt) && Objects.equals(updatedAt, product.updatedAt) && Objects.equals(isActive, product.isActive) && Objects.equals(manufacturer, product.manufacturer) && Objects.equals(isOutOfStock, product.isOutOfStock) && Objects.equals(details, product.details) && Objects.equals(totalIncome, product.totalIncome) && Objects.equals(totalCharges, product.totalCharges) && Objects.equals(image, product.image);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, price, quantity, category, createdAt, updatedAt, isActive, manufacturer, isOutOfStock, details, totalIncome, totalCharges, image);
+        return Objects.hash(id, title, description, price, quantity, purchasePrice, category, totalSoldQuantity, createdAt, updatedAt, isActive, manufacturer, isOutOfStock, details, totalIncome, totalCharges, image);
     }
 }
