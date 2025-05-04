@@ -7,11 +7,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+
 public class SubscriptionDTO {
 
 
     private UUID id;
-    private String Description;
+    private String description;
     private BigDecimal price;
     private BigDecimal totalPaid = BigDecimal.ZERO; // Default value
     private Plan plan;
@@ -22,19 +23,17 @@ public class SubscriptionDTO {
     // ✅ Constructeur vide (requis pour MapStruct et Jackson)
     public SubscriptionDTO() {}
 
-    // ✅ Constructeur complet (optionnel, utile si tu veux créer rapidement une instance sans setters)
-    public SubscriptionDTO(UUID id, String Description, BigDecimal price, BigDecimal totalPaid, Plan plan, boolean isActive, LocalDate expiredAt,UUID userId) {
+    public SubscriptionDTO(UUID id, String description, BigDecimal price, BigDecimal totalPaid, Plan plan, boolean isActive, LocalDate expiredAt, UUID userId) {
         this.id = id;
+        this.description = description;
         this.price = price;
         this.totalPaid = totalPaid;
         this.plan = plan;
         this.isActive = isActive;
         this.expiredAt = expiredAt;
         this.userId = userId;
-        this.Description = Description;
     }
 
-    // ✅ Getters & Setters
     public UUID getId() {
         return id;
     }
@@ -42,11 +41,13 @@ public class SubscriptionDTO {
     public void setId(UUID id) {
         this.id = id;
     }
+
     public String getDescription() {
-        return Description;
+        return description;
     }
-    public void setDescription(String Description) {
-        this.Description = Description;
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public BigDecimal getPrice() {

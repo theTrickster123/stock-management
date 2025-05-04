@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -113,6 +114,7 @@ public class ProductService {
         throw new RuntimeException("Product not found with id " + id);
     }
 
+    //a tester
     @Transactional
     public ProductSaleResponseDTO sellProduct(Long productId, int quantitySold) {
         Product product = productRepository.findById(productId)
@@ -145,4 +147,23 @@ public class ProductService {
 
         return responseDTO;
     }
+
+    public List<ProductDTO> findTopSellingProducts() {
+        return productRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparingInt(Product::getTotalSoldQuantity).reversed())
+                .limit(5) // par exemple, top 5
+                .map(ProductMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductDTO> findLowSellingProducts() {
+        return productRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparingInt(Product::getTotalSoldQuantity))
+                .limit(5) // par exemple, top 5
+                .map(ProductMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
 }

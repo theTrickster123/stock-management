@@ -62,7 +62,7 @@ public class SubscriptionPaymentService {
         return subscriptionPaymentMapper.toDTO(subscriptionPayment);
     }
 
-    // Méthode pour mettre à jour l'abonnement après paiement
+    // Méthode pour mettre à jour l'abonnement après paiement (a tester)
     private void updateSubscriptionAfterPayment(Subscription subscription, BigDecimal amountPayed) {
         // Ajouter le montant payé au total
         subscription.setTotalPaid(subscription.getTotalPaid().add(amountPayed));

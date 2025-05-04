@@ -5,12 +5,11 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 
 @Entity
-@Table(name="product")
+@Table(name="product")  //Have to work more on its logic and adapt DTO to last version
 public class Product {
 
     @Id

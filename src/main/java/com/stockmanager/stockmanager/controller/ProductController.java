@@ -60,9 +60,7 @@ public class ProductController {
     }
     // Endpoint pour vendre un produit a test plus tard
     @PostMapping("/{productId}/sell")
-    public ResponseEntity<ProductSaleResponseDTO> sellProduct(
-            @PathVariable Long productId,
-            @RequestParam int quantitySold) {
+    public ResponseEntity<ProductSaleResponseDTO> sellProduct(@PathVariable Long productId, @RequestParam int quantitySold) {
 
         ProductSaleResponseDTO responseDTO = productService.sellProduct(productId, quantitySold);
 
