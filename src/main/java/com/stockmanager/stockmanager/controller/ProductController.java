@@ -3,6 +3,7 @@ package com.stockmanager.stockmanager.controller;
 import com.stockmanager.stockmanager.dto.CreateProductDTO;
 import com.stockmanager.stockmanager.dto.ProductDTO;
 import com.stockmanager.stockmanager.dto.ProductSaleResponseDTO;
+import com.stockmanager.stockmanager.dto.ProfitAndChargeDTO;
 import com.stockmanager.stockmanager.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,6 +66,27 @@ public class ProductController {
         ProductSaleResponseDTO responseDTO = productService.sellProduct(productId, quantitySold);
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    //Just added this endpoints have to be tested on Postman
+    @GetMapping("/top-sellers")
+    public List<ProductDTO> getTopSellingProducts() {
+        return productService.findTopSellingProducts();
+    }
+
+    @GetMapping("/low-sellers")
+    public List<ProductDTO> getLowSellingProducts() {
+        return productService.findLowSellingProducts();
+    }
+
+    @GetMapping("/top-revenue")
+    public List<ProductDTO> getTopRevenueProducts() {
+        return productService.findTopRevenueProducts();
+    }
+
+    @GetMapping("/profit-and-charges")
+    public ProfitAndChargeDTO getProfitAndCharges() {
+        return productService.calculateProfitAndCharges();
     }
 
 

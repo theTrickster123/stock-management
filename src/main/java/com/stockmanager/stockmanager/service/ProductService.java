@@ -4,6 +4,7 @@ package com.stockmanager.stockmanager.service;
 import com.stockmanager.stockmanager.dto.CreateProductDTO;
 import com.stockmanager.stockmanager.dto.ProductDTO;
 import com.stockmanager.stockmanager.dto.ProductSaleResponseDTO;
+import com.stockmanager.stockmanager.dto.ProfitAndChargeDTO;
 import com.stockmanager.stockmanager.mapper.ProductMapper;
 import com.stockmanager.stockmanager.mapper.ProductSaleMapper;
 import com.stockmanager.stockmanager.model.Category;
@@ -148,6 +149,8 @@ public class ProductService {
         return responseDTO;
     }
 
+    //Just added them should test them all and verify if APIs are working
+
     public List<ProductDTO> findTopSellingProducts() {
         return productRepository.findAll()
                 .stream()
@@ -164,6 +167,32 @@ public class ProductService {
                 .limit(5) // par exemple, top 5
                 .map(ProductMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<ProductDTO> findTopRevenueProducts() {
+        return productRepository.findAll()
+                .stream()
+                .sorted((p1, p2) -> p2.getPrice().multiply(BigDecimal.valueOf(p2.getTotalSoldQuantity()))
+                        .compareTo(p1.getPrice().multiply(BigDecimal.valueOf(p1.getTotalSoldQuantity()))))
+                .limit(5)
+                .map(ProductMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public ProfitAndChargeDTO calculateProfitAndCharges() {
+        List<Product> products = productRepository.findAll();
+
+        BigDecimal totalRevenue = products.stream()
+                .map(p -> p.getPrice().multiply(BigDecimal.valueOf(p.getTotalSoldQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalCost = products.stream()
+                .map(p -> p.getPurchasePrice().multiply(BigDecimal.valueOf(p.getTotalSoldQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal profit = totalRevenue.subtract(totalCost);
+
+        return new ProfitAndChargeDTO(totalRevenue, totalCost, profit);
     }
 
 }
