@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -56,31 +57,40 @@ public class SubscriptionPaymentService {
         subscriptionPayment = subscriptionPaymentRepository.save(subscriptionPayment);
 
         // Mettre à jour la date d'expiration et l'état de l'abonnement
-        updateSubscriptionAfterPayment(subscription, amountPayed);
+        updateSubscriptionAfterPayment(subscriptionId, amountPayed);
 
         // Mapper en DTO et retourner
         return subscriptionPaymentMapper.toDTO(subscriptionPayment);
     }
 
     // Méthode pour mettre à jour l'abonnement après paiement (a tester)
-    private void updateSubscriptionAfterPayment(Subscription subscription, BigDecimal amountPayed) {
-        // Ajouter le montant payé au total
-        subscription.setTotalPaid(subscription.getTotalPaid().add(amountPayed));
+    public void updateSubscriptionAfterPayment(UUID id, BigDecimal amountPayed) {
+        Subscription subscription = subscriptionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Subscription not found"));
 
-        // Vérifier si le montant payé atteint ou dépasse le prix
-        if (subscription.getTotalPaid().compareTo(subscription.getPrice()) >= 0) {
-            // Mettre à jour la date d'expiration de l'abonnement
-            subscription.setExpiredAt(LocalDate.now().plusMonths(1));  // Exemple : ajouter un mois à l'expiration
-
-            // L'abonnement devient actif
-            subscription.setActive(true);
-        } else {
-            // Si le paiement est insuffisant, désactiver l'abonnement
-            subscription.setActive(false);
+        //Si l'abo est toujours actif pas besoin de payer
+        if(subscription.isActive()) {
+            subscriptionRepository.save(subscription);
         }
+        else {
+            // Ajouter le montant payé au total
+            subscription.setTotalPaid(subscription.getTotalPaid().add(amountPayed));
 
-        // Sauvegarder l'abonnement mis à jour
-        subscriptionRepository.save(subscription);
+            // Vérifier si le montant payé atteint ou dépasse le prix
+            if (amountPayed.compareTo(subscription.getPrice()) >= 0) {
+                // Mettre à jour la date d'expiration de l'abonnement
+                subscription.setExpiredAt(LocalDate.now().plusMonths(1));  // Exemple : ajouter un mois à l'expiration
+
+                // L'abonnement devient actif
+                subscription.setActive(true);
+            } else {
+                // Si le paiement est insuffisant, désactiver l'abonnement
+                subscription.setActive(false);
+            }
+
+            // Sauvegarder l'abonnement mis à jour
+            subscriptionRepository.save(subscription);
+        }
     }
 
     public List<SubscriptionPaymentDTO> getPaymentsBySubscriptionId(UUID subscriptionId) {

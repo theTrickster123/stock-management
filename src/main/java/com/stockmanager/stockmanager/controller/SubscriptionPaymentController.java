@@ -1,6 +1,7 @@
 package com.stockmanager.stockmanager.controller;
 
 import com.stockmanager.stockmanager.dto.SubscriptionPaymentDTO;
+import com.stockmanager.stockmanager.model.Subscription;
 import com.stockmanager.stockmanager.service.SubscriptionPaymentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,5 +50,12 @@ public class SubscriptionPaymentController {
     public ResponseEntity<Void> deletePayment(@PathVariable UUID id) {
         subscriptionPaymentService.deletePayment(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/pay/{id}")
+    public ResponseEntity<Void> updateSubscriptionAfterPayment(@PathVariable UUID id, @RequestParam BigDecimal amountPayed) {
+        subscriptionPaymentService.updateSubscriptionAfterPayment(id,amountPayed);
+        return ResponseEntity.ok().build();
+
     }
 }
