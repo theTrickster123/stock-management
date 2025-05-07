@@ -48,6 +48,7 @@ public class SubscriptionService {
         LocalDate expiredAt = currentDate.plusMonths(1); // 1 mois par défaut
         subscription.setExpiredAt(expiredAt);
 
+        subscription.setActive(false);
         subscription = subscriptionRepository.save(subscription);
         return subscriptionMapper.toDTO(subscription);
 
@@ -61,70 +62,50 @@ public class SubscriptionService {
     }
     //Update susbscription
     public SubscriptionDTO updateSubscription(SubscriptionDTO subscriptionDTO, UUID id) {
-        Optional<Subscription> subscription = subscriptionRepository.findById(id);
-        if (subscription.isEmpty()) {
-            throw new RuntimeException("Subscription not found");  // Gérer l'exception
+        Subscription existing = subscriptionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Subscription not found"));
+
+        subscriptionMapper.updateEntityFromDTO(subscriptionDTO, existing);
+
+        subscriptionRepository.save(existing);
+        return subscriptionMapper.toDTO(existing);
         }
 
-
-
-
-        // Mapper DTO -> Entity et mettre à jour
-        Subscription existingSubscription = subscription.get();
-        existingSubscription = subscriptionMapper.toEntity(subscriptionDTO);  // Mettre à jour les valeurs avec la methode toEntity de l'interface SubscriptionMapper
-        existingSubscription.setId(id);  // Garder le même ID
-
-        //ne pas avoir null sur expired_at
-        existingSubscription.setExpiredAt(
-                existingSubscription.getExpiredAt() != null
-                        ? existingSubscription.getExpiredAt()
-                        : subscription.get().getExpiredAt()
-        );
-        existingSubscription = subscriptionRepository.save(existingSubscription);  // Sauvegarder dans la DB
-
-        return subscriptionMapper.toDTO(existingSubscription);  // Retourner le DTO de la souscription mise à jour
-
-        }
-
-    @Scheduled(cron = "0 */10 * * * *") // Exécuté toutes les 24 heures (a test)
-    public void updateSubscriptionStatus() {
-        LocalDate currentDate = LocalDate.now();
-        List<Subscription> subscriptions = subscriptionRepository.findAll();
-
-        for (Subscription subscription : subscriptions) {
-            Optional<SubscriptionPayment> lastPaymentOpt = subscriptionPaymentRepository
-                    .findFirstBySubscriptionOrderByCreatedAtDesc(subscription);
-
-            boolean isActive = false;
-
-            if (lastPaymentOpt.isPresent()) {
-                SubscriptionPayment lastPayment = lastPaymentOpt.get();
-                LocalDate newExpiredAt = lastPayment.getCreatedAt().toLocalDate().plusMonths(1);
-
-                // Mise à jour de la date d'expiration si elle a changé
-                if (!newExpiredAt.equals(subscription.getExpiredAt())) {
-                    subscription.setExpiredAt(newExpiredAt);
-                }
-
-                // Vérifie si l'abonnement est encore valide
-                isActive = !currentDate.isAfter(newExpiredAt);
-            } else {
-                // Aucun paiement : expiration inchangée, mais on vérifie quand même si elle est dépassée
-                isActive = subscription.getExpiredAt().isAfter(currentDate);
-            }
-
-            // Mise à jour du statut uniquement si nécessaire
-            if (subscription.isActive() != isActive) {
-                subscription.setActive(isActive);
-            }
-
-            subscriptionRepository.save(subscription);
-        }
-    }
-
-
-
-
+//    @Scheduled(cron = "0 */10 * * * *") // Exécuté toutes les 24 heures (to change later)
+//    public void updateSubscriptionStatus() {
+//        LocalDate currentDate = LocalDate.now();
+//        List<Subscription> subscriptions = subscriptionRepository.findAll();
+//
+//        for (Subscription subscription : subscriptions) {
+//            Optional<SubscriptionPayment> lastPaymentOpt = subscriptionPaymentRepository
+//                    .findFirstBySubscriptionOrderByCreatedAtDesc(subscription);
+//
+//            boolean isActive = false;
+//
+//            if (lastPaymentOpt.isPresent()) {
+//                SubscriptionPayment lastPayment = lastPaymentOpt.get();
+//                LocalDate newExpiredAt = lastPayment.getCreatedAt().toLocalDate().plusMonths(1);
+//
+//                // Mise à jour de la date d'expiration si elle a changé
+//                if (!newExpiredAt.equals(subscription.getExpiredAt())) {
+//                    subscription.setExpiredAt(newExpiredAt);
+//                }
+//
+//                // Vérifie si l'abonnement est encore valide
+//                isActive = !currentDate.isAfter(newExpiredAt);
+//            } else {
+//                // Aucun paiement : expiration inchangée, mais on vérifie quand même si elle est dépassée
+//                isActive = subscription.getExpiredAt().isAfter(currentDate);
+//            }
+//
+//            // Mise à jour du statut uniquement si nécessaire
+//            if (subscription.isActive() != isActive) {
+//                subscription.setActive(isActive);
+//            }
+//
+//            subscriptionRepository.save(subscription);
+//        }
+//    }
 }
 
 

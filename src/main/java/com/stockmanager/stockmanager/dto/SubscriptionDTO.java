@@ -1,6 +1,8 @@
 package com.stockmanager.stockmanager.dto;
 
 import com.stockmanager.stockmanager.enums.Plan;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 
 import java.math.BigDecimal;
@@ -12,21 +14,31 @@ public class SubscriptionDTO {
 
 
     private UUID id;
+
+    @NotBlank(message = "La description ne peut pas être vide.")
     private String description;
+
     private BigDecimal price;
+
     private BigDecimal totalPaid = BigDecimal.ZERO; // Default value
+
+    @NotNull(message = "Le plan est obligatoire.")
     private Plan plan;
+
+    @NotNull(message = "Le statut d'activation est obligatoire.")
     private boolean isActive = true;
+
     private LocalDate expiredAt;
+
     private UUID userId; // 🔥 Au lieu de l’objet AppUser entier
 
     // ✅ Constructeur vide (requis pour MapStruct et Jackson)
     public SubscriptionDTO() {}
 
-    public SubscriptionDTO(UUID id, String description, BigDecimal price, BigDecimal totalPaid, Plan plan, boolean isActive, LocalDate expiredAt, UUID userId) {
+    public SubscriptionDTO(UUID id, String description, BigDecimal totalPaid, Plan plan, boolean isActive, LocalDate expiredAt, UUID userId) {
         this.id = id;
         this.description = description;
-        this.price = price;
+        this.price = plan.getPrice();
         this.totalPaid = totalPaid;
         this.plan = plan;
         this.isActive = isActive;

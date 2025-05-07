@@ -1,8 +1,9 @@
 package com.stockmanager.stockmanager.controller;
 
 import com.stockmanager.stockmanager.dto.SubscriptionPaymentDTO;
-import com.stockmanager.stockmanager.model.Subscription;
+import com.stockmanager.stockmanager.exception.InsufficientPaymentException;
 import com.stockmanager.stockmanager.service.SubscriptionPaymentService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +22,16 @@ public class SubscriptionPaymentController {
         this.subscriptionPaymentService = subscriptionPaymentService;
     }
 
-    /*@PostMapping
-    public ResponseEntity<SubscriptionPaymentDTO> createPayment(@RequestBody SubscriptionPaymentDTO dto) {
-        SubscriptionPaymentDTO created = subscriptionPaymentService.createPayment(dto);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
-    }*/
-
     @PostMapping("/{subscriptionId}")
-    public ResponseEntity<SubscriptionPaymentDTO> createPayment(@PathVariable UUID subscriptionId,
+    public ResponseEntity<?> createPayment(@PathVariable UUID subscriptionId,
                                                                 @RequestParam BigDecimal amountPayed) {
-        SubscriptionPaymentDTO subscriptionPaymentDTO = subscriptionPaymentService.createSubscriptionPayment(subscriptionId, amountPayed);
-        return ResponseEntity.ok(subscriptionPaymentDTO);
+        try {
+            SubscriptionPaymentDTO subscriptionPaymentDTO = subscriptionPaymentService
+                    .createSubscriptionPayment(subscriptionId, amountPayed);
+            return ResponseEntity.ok(subscriptionPaymentDTO);
+        } catch (InsufficientPaymentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping("/subscription/{subscriptionId}")
@@ -52,10 +52,4 @@ public class SubscriptionPaymentController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/pay/{id}")
-    public ResponseEntity<Void> updateSubscriptionAfterPayment(@PathVariable UUID id, @RequestParam BigDecimal amountPayed) {
-        subscriptionPaymentService.updateSubscriptionAfterPayment(id,amountPayed);
-        return ResponseEntity.ok().build();
-
-    }
 }

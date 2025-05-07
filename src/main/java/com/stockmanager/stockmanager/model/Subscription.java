@@ -30,6 +30,9 @@ public class Subscription {
     @Column(nullable = false,length = 15)
     private Plan plan;
 
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
+
     @Column(name="is_active",nullable = false)
     private boolean isActive=true;
 
@@ -56,11 +59,15 @@ public class Subscription {
     }
 
     public Subscription(UUID id, LocalDateTime createdAt, LocalDateTime updatedAt, BigDecimal totalPaid, Plan plan, boolean isActive, AppUser appUser, String description, LocalDate expiredAt) {
+        if (plan == null) {
+            throw new IllegalArgumentException("Plan cannot be null");
+        }
         this.id = id;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.totalPaid = totalPaid;
         this.plan = plan;
+        this.price = plan.getPrice();  // Initialisation du prix à la création
         this.isActive = isActive;
         this.appUser = appUser;
         this.description = description;
@@ -98,7 +105,7 @@ public class Subscription {
     }
 
     public BigDecimal getPrice() {
-        return plan.getPrice();
+        return price;
     }
 
     public BigDecimal getTotalPaid() {
@@ -115,6 +122,9 @@ public class Subscription {
 
     public void setPlan(Plan plan) {
         this.plan = plan;
+        if (plan != null) {
+            this.price = plan.getPrice();
+        }
     }
 
     public boolean isActive() {
@@ -155,7 +165,7 @@ public class Subscription {
                 "id=" + id +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", price=" + plan.getPrice() +
+                ", price=" + price +
                 ", totalPaid=" + totalPaid +
                 ", plan=" + plan +
                 ", isActive=" + isActive +
@@ -169,11 +179,11 @@ public class Subscription {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Subscription that = (Subscription) o;
-        return isActive == that.isActive && Objects.equals(id, that.id) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(totalPaid, that.totalPaid) && plan == that.plan && Objects.equals(appUser, that.appUser) && Objects.equals(description, that.description) && Objects.equals(expiredAt, that.expiredAt);
+        return isActive == that.isActive && Objects.equals(id, that.id) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(totalPaid, that.totalPaid) && plan == that.plan && Objects.equals(price, that.price) && Objects.equals(appUser, that.appUser) && Objects.equals(description, that.description) && Objects.equals(expiredAt, that.expiredAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, createdAt, updatedAt, totalPaid, plan, isActive, appUser, description, expiredAt);
+        return Objects.hash(id, createdAt, updatedAt, totalPaid, plan, price, isActive, appUser, description, expiredAt);
     }
 }

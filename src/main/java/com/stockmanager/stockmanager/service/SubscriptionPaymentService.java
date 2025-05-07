@@ -1,6 +1,7 @@
 package com.stockmanager.stockmanager.service;
 
 import com.stockmanager.stockmanager.dto.SubscriptionPaymentDTO;
+import com.stockmanager.stockmanager.exception.InsufficientPaymentException;
 import com.stockmanager.stockmanager.mapper.SubscriptionPaymentMapper;
 import com.stockmanager.stockmanager.model.Subscription;
 import com.stockmanager.stockmanager.model.SubscriptionPayment;
@@ -53,8 +54,6 @@ public class SubscriptionPaymentService {
         subscriptionPayment.setAmountPayed(amountPayed);
         subscriptionPayment.setSubscription(subscription);
 
-        // Sauvegarder le paiement
-        subscriptionPayment = subscriptionPaymentRepository.save(subscriptionPayment);
 
         // Mettre à jour la date d'expiration et l'état de l'abonnement
         updateSubscriptionAfterPayment(subscriptionId, amountPayed);
@@ -78,6 +77,13 @@ public class SubscriptionPaymentService {
 
             // Vérifier si le montant payé atteint ou dépasse le prix
             if (amountPayed.compareTo(subscription.getPrice()) >= 0) {
+
+                // Créer un nouvel enregistrement de paiement
+                SubscriptionPayment subscriptionPayment = new SubscriptionPayment();
+                subscriptionPayment.setAmountPayed(amountPayed);
+                subscriptionPayment.setSubscription(subscription);
+                subscriptionPaymentRepository.save(subscriptionPayment);
+
                 // Mettre à jour la date d'expiration de l'abonnement
                 subscription.setExpiredAt(LocalDate.now().plusMonths(1));  // Exemple : ajouter un mois à l'expiration
 
@@ -85,7 +91,8 @@ public class SubscriptionPaymentService {
                 subscription.setActive(true);
             } else {
                 // Si le paiement est insuffisant, désactiver l'abonnement
-                subscription.setActive(false);
+                throw new InsufficientPaymentException("Montant insuffisant");
+
             }
 
             // Sauvegarder l'abonnement mis à jour
