@@ -1,8 +1,11 @@
 package com.stockmanager.stockmanager.dto;
 
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+
 import java.math.BigDecimal;
 
-public class CreateProductDTO {
+public class UpdateProductDTO {
 
     private Long id;
     private String title;
@@ -10,18 +13,17 @@ public class CreateProductDTO {
     private BigDecimal price;
     private Integer quantity;
     private Long categoryId; // Référence à une catégorie existante
-    private Boolean isActive=true;
-    private String manufacturer;
-    private Boolean isOutOfStock=false;
+    private Boolean isActive=true; // Ce champ pourrait être mis à jour selon l'état du produit
+    private Boolean isOutOfStock=false; // Ce champ pourrait être mis à jour selon l'état du stock
     private String details;
-    private BigDecimal totalIncome=BigDecimal.ZERO;
-    private BigDecimal totalCharges=BigDecimal.ZERO;
-    private String image;
     private BigDecimal purchasePrice;
 
-    public CreateProductDTO() {
+    public UpdateProductDTO() {
 
     }
+
+
+
 
     public Long getId() {
         return id;
@@ -29,14 +31,6 @@ public class CreateProductDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public BigDecimal getPurchasePrice() {
-        return purchasePrice;
-    }
-
-    public void setPurchasePrice(BigDecimal purchasePrice) {
-        this.purchasePrice = purchasePrice;
     }
 
     public String getTitle() {
@@ -87,14 +81,6 @@ public class CreateProductDTO {
         isActive = active;
     }
 
-    public String getManufacturer() {
-        return manufacturer;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
     public Boolean getOutOfStock() {
         return isOutOfStock;
     }
@@ -111,27 +97,11 @@ public class CreateProductDTO {
         this.details = details;
     }
 
-    public BigDecimal getTotalIncome() {
-        return totalIncome;
+    public BigDecimal getPurchasePrice() {
+        return purchasePrice;
     }
 
-    public void setTotalIncome(BigDecimal totalIncome) {
-        this.totalIncome = totalIncome;
-    }
-
-    public BigDecimal getTotalCharges() {
-        return totalCharges;
-    }
-
-    public void setTotalCharges(BigDecimal totalCharges) {
-        this.totalCharges = totalCharges;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
+    public void setPurchasePrice(BigDecimal purchasePrice) {
+        this.purchasePrice = purchasePrice;
     }
 }

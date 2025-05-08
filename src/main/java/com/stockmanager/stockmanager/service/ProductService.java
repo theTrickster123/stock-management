@@ -1,10 +1,7 @@
 package com.stockmanager.stockmanager.service;
 
 
-import com.stockmanager.stockmanager.dto.CreateProductDTO;
-import com.stockmanager.stockmanager.dto.ProductDTO;
-import com.stockmanager.stockmanager.dto.ProductSaleResponseDTO;
-import com.stockmanager.stockmanager.dto.ProfitAndChargeDTO;
+import com.stockmanager.stockmanager.dto.*;
 import com.stockmanager.stockmanager.mapper.ProductMapper;
 import com.stockmanager.stockmanager.mapper.ProductSaleMapper;
 import com.stockmanager.stockmanager.model.Category;
@@ -28,17 +25,19 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProductSaleMapper productSaleMapper;
+    private final ProductMapper productMapper;
 
     @Autowired
-    public ProductService(ProductRepository productRepository,CategoryRepository categoryRepository,ProductSaleMapper productSaleMapper) {
+    public ProductService(ProductRepository productRepository,CategoryRepository categoryRepository,ProductSaleMapper productSaleMapper,ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.productSaleMapper = productSaleMapper;
+        this.productMapper = productMapper;
     }
 
 
     @Transactional
-    public ProductDTO createProduct(CreateProductDTO dto) {
+    public CreateProductDTO createProduct(CreateProductDTO dto) {
         if (dto == null) throw new IllegalArgumentException("Les données sont manquantes");
 
         // On récupère la catégorie à partir de son ID
@@ -59,10 +58,11 @@ public class ProductService {
         product.setTotalIncome(dto.getTotalIncome());
         product.setTotalCharges(dto.getTotalCharges());
         product.setImage(dto.getImage());
+        product.setPurchasePrice(dto.getPurchasePrice());
 
         // Sauvegarde et mapping en DTO
         Product saved = productRepository.save(product);
-        return ProductMapper.toDto(saved);
+        return productMapper.toCreateProductDTO(saved);
     }
 
     public ProductDTO findById(Long id) {
@@ -70,7 +70,7 @@ public class ProductService {
 
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
-            return ProductMapper.toDto(product); // Convert the Product to ProductDTO using the ProductMapper
+            return productMapper.toProductDTO(product); // Convert the Product to ProductDTO using the ProductMapper
         } else {
             throw new RuntimeException("Product not found with id: " + id);
         }
@@ -79,7 +79,7 @@ public class ProductService {
     public List<ProductDTO> getAllProducts() {
         List<Product> products = productRepository.findAll();
         return products.stream()
-                .map(ProductMapper::toDto)
+                .map(productMapper::toProductDTO)
                 .collect(Collectors.toList());
     }
 
@@ -91,29 +91,35 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDTO updateProduct(ProductDTO dto, Long id) {
-        Optional<Product> productOpt = productRepository.findById(id);
-        if (productOpt.isPresent()) {
-            Category category = categoryRepository.findById(dto.getCategory().getId())
-                    .orElseThrow(() -> new RuntimeException("Category not found with id: " + dto.getCategory().getId()));
-            Product product = productOpt.get();
-            product.setTitle(dto.getTitle());
-            product.setDescription(dto.getDescription());
-            product.setPrice(dto.getPrice());
-            product.setQuantity(dto.getQuantity());
-            product.setCategory(category);
-            product.setActive(dto.getActive());
-            product.setManufacturer(dto.getManufacturer());
-            product.setOutOfStock(dto.getOutOfStock());
-            product.setDetails(dto.getDetails());
-            product.setTotalIncome(dto.getTotalIncome());
-            product.setTotalCharges(dto.getTotalCharges());
-            product.setImage(dto.getImage());
-            Product saved = productRepository.save(product);
-            return ProductMapper.toDto(saved);
+    public ProductDTO updateProduct(UpdateProductDTO dto, Long id) {
+        // Recherche du produit à mettre à jour
+        Product productOpt = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id " + id));
+
+        // Recherche de la catégorie associée au produit
+        Category category = categoryRepository.findById(dto.getCategoryId()) // Utilisation de categoryId dans le DTO
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + dto.getCategoryId()));
+
+        // Mise à jour de la catégorie du produit
+        productOpt.setCategory(category);
+
+        // Application des changements à partir du DTO
+        productMapper.updateProductFromDTO(dto, productOpt);
+
+        if(dto.getQuantity()<=0){
+            productOpt.setOutOfStock(true);
         }
-        throw new RuntimeException("Product not found with id " + id);
+        else {
+            productOpt.setOutOfStock(false);
+        }
+
+        // Sauvegarde de l'entité mise à jour
+        Product saved = productRepository.save(productOpt);
+
+        // Retour du DTO mis à jour
+        return productMapper.toProductDTO(saved);
     }
+
 
     //a tester
     @Transactional
@@ -156,7 +162,7 @@ public class ProductService {
                 .stream()
                 .sorted(Comparator.comparingInt(Product::getTotalSoldQuantity).reversed())
                 .limit(5) // par exemple, top 5
-                .map(ProductMapper::toDto)
+                .map(productMapper::toProductDTO)
                 .collect(Collectors.toList());
     }
 
@@ -165,7 +171,7 @@ public class ProductService {
                 .stream()
                 .sorted(Comparator.comparingInt(Product::getTotalSoldQuantity))
                 .limit(5) // par exemple, top 5
-                .map(ProductMapper::toDto)
+                .map(productMapper::toProductDTO)
                 .collect(Collectors.toList());
     }
 
@@ -175,7 +181,7 @@ public class ProductService {
                 .sorted((p1, p2) -> p2.getPrice().multiply(BigDecimal.valueOf(p2.getTotalSoldQuantity()))
                         .compareTo(p1.getPrice().multiply(BigDecimal.valueOf(p1.getTotalSoldQuantity()))))
                 .limit(5)
-                .map(ProductMapper::toDto)
+                .map(productMapper::toProductDTO)
                 .collect(Collectors.toList());
     }
 

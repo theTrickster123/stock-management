@@ -2,52 +2,34 @@ package com.stockmanager.stockmanager.mapper;
 
 import com.stockmanager.stockmanager.dto.CreateProductDTO;
 import com.stockmanager.stockmanager.dto.ProductDTO;
-import com.stockmanager.stockmanager.model.Category;
+import com.stockmanager.stockmanager.dto.UpdateProductDTO;
 import com.stockmanager.stockmanager.model.Product;
+import com.stockmanager.stockmanager.model.Category;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.factory.Mappers;
 
-public class ProductMapper {
+import java.util.List;
 
-    public static ProductDTO toDto(Product product) {
-        if (product == null) {
-            return null;
-        }
+@Mapper(componentModel = "spring")
+public interface ProductMapper {
 
-        return new ProductDTO(
-                product.getId(),
-                product.getTitle(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getQuantity(),
-                CategoryMapper.toDto(product.getCategory()), // 🔁 Mapper category aussi
-                product.getActive(),
-                product.getManufacturer(),
-                product.getOutOfStock(),
-                product.getDetails(),
-                product.getTotalIncome(),
-                product.getTotalCharges(),
-                product.getImage()
-        );
-    }
+    ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
-    // Map CreateProductDTO → Product (pour enregistrer en base)
-    public static Product toEntity(CreateProductDTO dto, Category category) {
-        if (dto == null) return null;
+    @Mapping(source = "id", target = "id")
+    CreateProductDTO toCreateProductDTO(Product product);
 
-        Product product = new Product();
-        product.setTitle(dto.getTitle());
-        product.setDescription(dto.getDescription());
-        product.setPrice(dto.getPrice());
-        product.setQuantity(dto.getQuantity());
-        product.setCategory(category); // 💡 on l’injecte depuis le service
-        product.setActive(dto.getActive());
-        product.setManufacturer(dto.getManufacturer());
-        product.setOutOfStock(dto.getOutOfStock());
-        product.setDetails(dto.getDetails());
-        product.setTotalIncome(dto.getTotalIncome());
-        product.setTotalCharges(dto.getTotalCharges());
-        product.setImage(dto.getImage());
+    @Mapping(source = "id", target = "id")
+    ProductDTO toProductDTO(Product product);
 
-        return product;
-        }
-    }
+    @Mapping(source = "id", target = "id")
+    Product toProduct(CreateProductDTO createProductDTO);
 
+    // Map pour UpdateProductDTO, uniquement les champs pertinents
+    @Mapping(target = "id", ignore = true)
+    void updateProductFromDTO(UpdateProductDTO updateProductDTO, @MappingTarget Product product);
+
+    List<ProductDTO> toDTOList(List<Product> products); // Convertir une liste d'entités en DTO
+    List<Product> toEntityList(List<ProductDTO> dtos);   // Convertir une liste de DTOs en entités
+}

@@ -13,6 +13,7 @@ public class ProductDTO {
     private Long id;
     private String title;
     private String description;
+    private BigDecimal purchasePrice;
     private BigDecimal price;
     private Integer quantity;
     private CategoryDTO category;
@@ -20,14 +21,14 @@ public class ProductDTO {
     private String manufacturer;
     private Boolean isOutOfStock;
     private String details;
-    private BigDecimal totalIncome;
-    private BigDecimal totalCharges;
+    private BigDecimal totalIncome=BigDecimal.ZERO;
+    private BigDecimal totalCharges=BigDecimal.ZERO;
     private String image;
 
     public ProductDTO() {
     }
 
-    public ProductDTO(Long id, String title, String description, BigDecimal price, Integer quantity, CategoryDTO category, Boolean isActive, String manufacturer, Boolean isOutOfStock, String details, BigDecimal totalIncome, BigDecimal totalCharges, String image) {
+    public ProductDTO(BigDecimal purchasePrice,Long id, String title, String description, BigDecimal price, Integer quantity, CategoryDTO category, Boolean isActive, String manufacturer, Boolean isOutOfStock, String details, BigDecimal totalIncome, BigDecimal totalCharges, String image) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -41,6 +42,15 @@ public class ProductDTO {
         this.totalIncome = totalIncome;
         this.totalCharges = totalCharges;
         this.image = image;
+        this.purchasePrice = purchasePrice;
+    }
+
+    public BigDecimal getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public void setPurchasePrice(BigDecimal purchasePrice) {
+        this.purchasePrice = purchasePrice;
     }
 
     public Long getId() {

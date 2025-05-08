@@ -28,14 +28,21 @@ public class Product {
     private Integer quantity;
 
     @Column(precision = 10, scale = 2, nullable = false)
-    private BigDecimal purchasePrice; // Prix d'achat du produit (ce que toi tu as payé)
+    private BigDecimal purchasePrice; // Prix d'achat du produit (ce que toi tu as payé) rajouter dans DTO
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
     private Category category;
 
+    // Champs supplémentaires pour stocker les informations de la catégorie
     @Column(nullable = false)
-    private Integer totalSoldQuantity = 0; // Quantité totale vendue
+    private String categoryTitle;
+
+    @Column(nullable = false)
+    private String categoryDescription;
+
+    @Column(nullable = false)
+    private Integer totalSoldQuantity = 0; // Quantité totale vendue a rajouter dans DTO
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -44,7 +51,7 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private Boolean isActive=true;
+    private Boolean isActive;
 
     @Column(length = 50, nullable = false)
     private String manufacturer;
@@ -56,10 +63,10 @@ public class Product {
     private String details;
 
     @Column(precision = 10, scale = 2, nullable = false)
-    private BigDecimal totalIncome;
+    private BigDecimal totalIncome=BigDecimal.ZERO;
 
     @Column(precision = 10, scale = 2, nullable = false)
-    private BigDecimal totalCharges;
+    private BigDecimal totalCharges=BigDecimal.ZERO;
 
     @Lob
     @Column(nullable = true)
@@ -73,6 +80,8 @@ public class Product {
         this.id = generateUniqueId();
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        categoryDescription = category.getDescription();
+        categoryTitle = category.getTitle();
     }
 
     @PreUpdate
@@ -118,6 +127,26 @@ public class Product {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCategoryTitle() {
+        return categoryTitle;
+    }
+
+    public void setCategoryTitle(String categoryTitle) {
+        this.categoryTitle = categoryTitle;
+    }
+
+    public String getCategoryDescription() {
+        return categoryDescription;
+    }
+
+    public void setCategoryDescription(String categoryDescription) {
+        this.categoryDescription = categoryDescription;
     }
 
     public String getTitle() {

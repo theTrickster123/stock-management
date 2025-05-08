@@ -1,9 +1,6 @@
 package com.stockmanager.stockmanager.controller;
 
-import com.stockmanager.stockmanager.dto.CreateProductDTO;
-import com.stockmanager.stockmanager.dto.ProductDTO;
-import com.stockmanager.stockmanager.dto.ProductSaleResponseDTO;
-import com.stockmanager.stockmanager.dto.ProfitAndChargeDTO;
+import com.stockmanager.stockmanager.dto.*;
 import com.stockmanager.stockmanager.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,8 +27,8 @@ public class ProductController {
     }*/
 
     @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody CreateProductDTO createProductDTO) {
-        ProductDTO createdProduct = productService.createProduct(createProductDTO);
+    public ResponseEntity<CreateProductDTO> createProduct(@RequestBody CreateProductDTO createProductDTO) {  //Have to fix purchasePrice being null when I create a product since I've changed few things in the logic of how the product is handled
+        CreateProductDTO createdProduct = productService.createProduct(createProductDTO);
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
@@ -42,7 +39,7 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    @GetMapping("")
+    @GetMapping("/get-all")
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<ProductDTO> productDTOs = productService.getAllProducts();
         return ResponseEntity.ok(productDTOs);
@@ -55,7 +52,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<UpdateProductDTO> updateProduct(@PathVariable Long id, @RequestBody UpdateProductDTO productDTO) {
         productService.updateProduct(productDTO, id);
         return ResponseEntity.ok(productDTO);
     }
