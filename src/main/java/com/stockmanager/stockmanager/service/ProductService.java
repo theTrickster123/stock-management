@@ -185,7 +185,17 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public ProfitAndChargeDTO calculateProfitAndCharges() {
+    public List<ProductDTO> findLessRevenueProducts() {
+        return productRepository.findAll()
+                .stream()
+                .sorted((p1, p2) -> p2.getPrice().multiply(BigDecimal.valueOf(p2.getTotalSoldQuantity()))
+                        .compareTo(p1.getPrice().multiply(BigDecimal.valueOf(p1.getTotalSoldQuantity()))))
+                .limit(5)
+                .map(productMapper::toProductDTO)
+                .collect(Collectors.toList());
+    }
+
+    public ProfitAndChargeDTO calculateProfitAndCharges() { //It calculate charges, revenue  and profit related to all products
         List<Product> products = productRepository.findAll();
 
         BigDecimal totalRevenue = products.stream()
@@ -199,6 +209,12 @@ public class ProductService {
         BigDecimal profit = totalRevenue.subtract(totalCost);
 
         return new ProfitAndChargeDTO(totalRevenue, totalCost, profit);
+    }
+
+    //Methode du chatbot a test
+
+    Optional<Product> getProductByTitle(String title) {
+        return productRepository.findProductByTitle(title);
     }
 
 }

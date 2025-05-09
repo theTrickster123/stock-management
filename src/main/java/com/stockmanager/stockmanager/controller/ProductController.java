@@ -20,12 +20,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-    /*@PostMapping
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO dto) {
-        ProductDTO created = productService.createProductFromDTO(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-    }*/
-
     @PostMapping
     public ResponseEntity<CreateProductDTO> createProduct(@RequestBody CreateProductDTO createProductDTO) {  //Have to fix purchasePrice being null when I create a product since I've changed few things in the logic of how the product is handled
         CreateProductDTO createdProduct = productService.createProduct(createProductDTO);
@@ -57,7 +51,7 @@ public class ProductController {
         return ResponseEntity.ok(productDTO);
     }
     // Endpoint pour vendre un produit a test plus tard
-    @PostMapping("/{productId}/sell")
+    @PostMapping("/sell/{productId}")  //Working perfectly
     public ResponseEntity<ProductSaleResponseDTO> sellProduct(@PathVariable Long productId, @RequestParam int quantitySold) {
 
         ProductSaleResponseDTO responseDTO = productService.sellProduct(productId, quantitySold);
@@ -66,22 +60,27 @@ public class ProductController {
     }
 
     //Just added this endpoints have to be tested on Postman
-    @GetMapping("/top-sellers")
+    @GetMapping("/top-sellers") //working perfectly
     public List<ProductDTO> getTopSellingProducts() {
         return productService.findTopSellingProducts();
     }
 
-    @GetMapping("/low-sellers")
+    @GetMapping("/low-sellers") //working perfectly
     public List<ProductDTO> getLowSellingProducts() {
         return productService.findLowSellingProducts();
     }
 
-    @GetMapping("/top-revenue")
+    @GetMapping("/top-revenue") //working perfectly
     public List<ProductDTO> getTopRevenueProducts() {
         return productService.findTopRevenueProducts();
     }
 
-    @GetMapping("/profit-and-charges")
+    @GetMapping("/low-revenue") // working perfectly
+    public List<ProductDTO> getLowRevenueProducts() {
+        return productService.findLessRevenueProducts();
+    }
+
+    @GetMapping("/profit-and-charges") //working perfectly
     public ProfitAndChargeDTO getProfitAndCharges() {
         return productService.calculateProfitAndCharges();
     }
