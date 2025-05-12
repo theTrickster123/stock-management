@@ -1,0 +1,73 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{pdflscape}
+\setlength{\headheight}{14.5pt}
+\geometry{margin=1in}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{{{brandName}}}} % repeatable
+\fancyhead[R]{\textbf{Subscription Bill}}
+\fancyfoot[C]{\thepage\ of \pageref{LastPage}}
+
+\definecolor{headerblue}{RGB}{0, 51, 102}
+
+\begin{document}
+
+% Setting up the header with brand name and logo placeholder
+    \begin{center}
+        \textbf{\LARGE {{{brandName}}}} \\[0.2cm] % repeatable
+        \small{Contact: {{{ownerContactEmail}}}} \\[0.5cm] % repeatable
+        \textbf{\large Subscription Bill} \\[0.3cm]
+    \end{center}
+
+% Subscriber and Owner Information
+    \begin{tabular}{l l}
+        \toprule
+        \textbf{Billed To:} & \textbf{Issued By:} \\
+        \midrule
+        {{subscriberFullName}} & {{ownerFullName}} \\
+        & {{ownerContactEmail}} \\
+        \bottomrule
+    \end{tabular}
+
+    \vspace{0.5cm}
+
+% Bill Details
+    \begin{tabular}{l l}
+        \toprule
+        \textbf{Bill Details} & \\
+        \midrule
+        \textbf{Payment Date:} & {{paymentDate}} \\
+        \textbf{Plan Name:} & {{{planName}}} \\
+        \textbf{Subscription Price:} & {{subscriberPlanPrice}} \\
+        \textbf{Total Paid:} & {{totalPaid}} \\
+        \textbf{Expiration Date:} & {{expiredDate}} \\
+        \bottomrule
+    \end{tabular}
+
+    \vspace{0.5cm}
+
+% Thank You Note and Motivation
+    \begin{center}
+        \textbf{\color{headerblue}Thank You for Your Subscription!} \\[0.2cm]
+    \end{center}
+    Dear {{subscriberFullName}}, \\
+
+    Thank you for choosing {{brandName}}'s Premium plan. We're thrilled to have you on board! Streamline your workflows and boost productivity with our powerful SaaS tools. Explore the full potential of {{brandName}} to transform your business efficiency. \\
+
+    For any assistance, reach out to us at {{ownerContactEmail}}. \\
+
+    Warm regards, \\
+    The {{brandName}} Team
+
+\end{document}

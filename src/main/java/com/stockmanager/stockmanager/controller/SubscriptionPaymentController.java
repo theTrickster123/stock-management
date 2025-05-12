@@ -31,6 +31,8 @@ public class SubscriptionPaymentController {
             return ResponseEntity.ok(subscriptionPaymentDTO);
         } catch (InsufficientPaymentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

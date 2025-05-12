@@ -1,5 +1,6 @@
 package com.stockmanager.stockmanager.service;
 
+import com.stockmanager.stockmanager.dto.BillResponseDTO;
 import com.stockmanager.stockmanager.dto.SubscriptionPaymentDTO;
 import com.stockmanager.stockmanager.exception.InsufficientPaymentException;
 import com.stockmanager.stockmanager.mapper.SubscriptionPaymentMapper;
@@ -11,9 +12,11 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,27 +27,19 @@ public class SubscriptionPaymentService {
     private final SubscriptionPaymentRepository subscriptionPaymentRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionPaymentMapper subscriptionPaymentMapper;
+    private final BillingService billingService;
+
 
     public SubscriptionPaymentService(SubscriptionPaymentRepository subscriptionPaymentRepository,
                                       SubscriptionRepository subscriptionRepository,
-                                      SubscriptionPaymentMapper subscriptionPaymentMapper) {
+                                      SubscriptionPaymentMapper subscriptionPaymentMapper, LatexInvoiceService latexInvoiceService, EmailService emailService, BillingService billingService) {
         this.subscriptionPaymentRepository = subscriptionPaymentRepository;
         this.subscriptionRepository = subscriptionRepository;
         this.subscriptionPaymentMapper = subscriptionPaymentMapper;
+        this.billingService = billingService;
     }
 
-    /*public SubscriptionPaymentDTO createPayment(SubscriptionPaymentDTO dto) {
-        Subscription subscription = subscriptionRepository.findById(dto.getSubscriptionId())
-                .orElseThrow(() -> new EntityNotFoundException("Subscription not found"));
-
-        SubscriptionPayment payment = subscriptionPaymentMapper.toEntity(dto);
-        payment.setSubscription(subscription);
-
-        SubscriptionPayment savedPayment = subscriptionPaymentRepository.save(payment);
-        return subscriptionPaymentMapper.toDTO(savedPayment);
-    }*/
-
-    public SubscriptionPaymentDTO createSubscriptionPayment(UUID subscriptionId, BigDecimal amountPayed) {
+    public SubscriptionPaymentDTO createSubscriptionPayment(UUID subscriptionId, BigDecimal amountPayed) throws Exception {
         // Récupérer la souscription associée
         Subscription subscription = subscriptionRepository.findById(subscriptionId)
                 .orElseThrow(() -> new EntityNotFoundException("Subscription not found"));
@@ -63,7 +58,7 @@ public class SubscriptionPaymentService {
     }
 
     // Méthode pour mettre à jour l'abonnement après paiement (a tester)
-    public void updateSubscriptionAfterPayment(UUID id, BigDecimal amountPayed) {
+    public void updateSubscriptionAfterPayment(UUID id, BigDecimal amountPayed) throws Exception {
         Subscription subscription = subscriptionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Subscription not found"));
 
@@ -89,6 +84,7 @@ public class SubscriptionPaymentService {
 
                 // L'abonnement devient actif
                 subscription.setActive(true);
+                billingService.generateAndSendInvoice(subscriptionPayment);
             } else {
                 // Si le paiement est insuffisant, désactiver l'abonnement
                 throw new InsufficientPaymentException("Montant insuffisant");
@@ -114,4 +110,8 @@ public class SubscriptionPaymentService {
     public void deletePayment(UUID id) {
         subscriptionPaymentRepository.deleteById(id);
     }
+
+
+
+
 }

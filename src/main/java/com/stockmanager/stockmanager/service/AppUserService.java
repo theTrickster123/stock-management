@@ -86,4 +86,22 @@ public class AppUserService {
         // Supprimer l'utilisateur
         appUserRepository.deleteById(id);
     }
+
+    //Add method to get subscriber's full name getFullName()
+
+    public String getFullName(UUID id) {
+        Optional<AppUser> appUser = appUserRepository.findById(id);
+        if (appUser.isPresent()) {
+            return appUser.get().getFirstName() + " " + appUser.get().getLastName();
+        }
+        throw new RuntimeException("User not found with id: " + id);
+    }
+
+    public String getEmail(UUID id) {
+        Optional<AppUser> appUser = appUserRepository.findById(id);
+        if (appUser.isPresent()) {
+            return appUser.get().getEmail();
+        }
+        throw new RuntimeException("User not found with id: " + id);
+    }
 }

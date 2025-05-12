@@ -18,5 +18,9 @@ public enum Plan {
         return price;
     }
 
+    public String getPlanName() {
+        return name();
+    }
+
 
 }
