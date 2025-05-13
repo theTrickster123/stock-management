@@ -4,6 +4,7 @@ import com.stockmanager.stockmanager.dto.AppUserDTO;
 
 import com.stockmanager.stockmanager.model.AppUser;
 import com.stockmanager.stockmanager.service.AppUserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

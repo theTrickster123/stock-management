@@ -32,7 +32,7 @@ public class LatexInvoiceService {
 
     public File compileToPdf(File texFile) throws IOException, InterruptedException {
         // Lancer la commande dans une nouvelle fenêtre de terminal
-        ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/k", "pdflatex -output-directory=invoices " + texFile.getAbsolutePath() + " && timeout /t 5 && exit");
+        ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/k", "pdflatex -output-directory=invoices " + texFile.getAbsolutePath() + " &&  exit");
         pb.redirectErrorStream(true);
         Process process = pb.start();
 
@@ -44,7 +44,20 @@ public class LatexInvoiceService {
             }
         }
 
-        process.waitFor(10, TimeUnit.SECONDS);
+
+
+        ProcessBuilder pb1 = new ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/k", "pdflatex -output-directory=invoices " + texFile.getAbsolutePath() + " &&  exit");
+        pb1.redirectErrorStream(true);
+        Process process1 = pb1.start();
+
+        // Lire la sortie du processus en temps réel
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process1.getInputStream()))) {
+            String line1;
+            while ((line1 = reader.readLine()) != null) {
+                System.out.println(line1); // Affiche la sortie dans la console
+            }
+        }
+
 
         String pdfPath = texFile.getAbsolutePath().replace(".tex", ".pdf");
         return new File(pdfPath);
